@@ -28,7 +28,8 @@ set -x
 
 WORK_DIR=`mktemp -d`
 
-venv/bin/youtube-dl --extract-audio --output "$WORK_DIR/a.%(ext)s" -- "$YOUTUBE_ID"
+venv/bin/youtube-dl --no-progress --extract-audio \
+  --output "$WORK_DIR/a.%(ext)s" -- "$YOUTUBE_ID"
 
 ffmpeg $FFMPEG_OPTIONS -i "$WORK_DIR"/a.* -ac 1 "$WORK_DIR/b.wav"
 
