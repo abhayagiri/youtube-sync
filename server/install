@@ -38,7 +38,7 @@ cd /opt/youtube-sync
 
 sudo -u youtube-sync git pull
 
-cp -f server/local.cfg
+cp -f server/local.cfg instance/local.cfg
 
 if [[ ! -d venv ]]; then
   sudo -u youtube-sync python3 -m venv venv
