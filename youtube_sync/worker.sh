@@ -26,25 +26,22 @@ fi
 
 set -x
 
-rm -rf tmp
-mkdir -p tmp
-
 WORK_DIR=`mktemp -d`
 
 venv/bin/youtube-dl --extract-audio --output "$WORK_DIR/a.%(ext)s" -- "$YOUTUBE_ID"
 
-ffmpeg $FFMPEG_OPTIONS -i tmp/a.* -ac 1 tmp/b.wav
+ffmpeg $FFMPEG_OPTIONS -i "$WORK_DIR"/a.* -ac 1 "$WORK_DIR/b.wav"
 
 $DYNAMIC_AUDIO_NORMALIZER_BIN \
   --alt-boundary --max-gain 20.0 --gauss-size 51 \
-  -i tmp/b.wav -o tmp/c.wav
+  -i "$WORK_DIR/b.wav" -o "$WORK_DIR/c.wav"
 
-fade_out_start=`ffprobe -v quiet -show_format_entry duration tmp/c.wav  | grep duration | sed 's/duration=//' | sed 's/$/-1/' | bc -l`
+fade_out_start=`ffprobe -v quiet -show_format_entry duration "$WORK_DIR/c.wav" | grep duration | sed 's/duration=//' | sed 's/$/-1/' | bc -l`
 
-ffmpeg -i tmp/c.wav \
+ffmpeg -i "$WORK_DIR/c.wav" \
   -af "afade=in:st=0:d=$FADE_IN_DURATION,afade=out:st=$fade_out_start:d=$FADE_OUT_DURATION" \
-  -b:a 64k -ac 1 tmp/d.mp3
+  -b:a 64k -ac 1 "$WORK_DIR/d.mp3"
 
-scp tmp/d.mp3 "$DESTINATION_SERVER_PATH/$YOUTUBE_ID.mp3"
+scp "$WORK_DIR/d.mp3" "$DESTINATION_SERVER_PATH/$YOUTUBE_ID.mp3"
 
-rm -rf $WORK_DIR
+rm -rf "$WORK_DIR"
