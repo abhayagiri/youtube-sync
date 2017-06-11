@@ -8,7 +8,7 @@ User=youtube-sync
 Group=youtube-sync
 EnvironmentFile=-/opt/youtube-sync/server/systemd.env
 WorkingDirectory=/opt/youtube-sync
-ExecStart=/bin/sh -c '{GUNICORN_BIN} \
+ExecStart=/bin/sh -c '${GUNICORN_BIN} \
   --pid ${GUNICORN_PID} \
   --log-file ${GUNICORN_LOG} \
   --bind ${GUNICORN_BIND} \
