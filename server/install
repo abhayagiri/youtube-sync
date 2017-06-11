@@ -1,4 +1,7 @@
-#!/bin/bash -e
+#!/bin/bash
+
+set -e
+set -x
 
 apt-get update
 apt-get install -y \
@@ -27,18 +30,18 @@ fi
 if [[ ! -d /opt/youtube-sync ]]; then
   mkdir /opt/youtube-sync
   chown youtube-sync:youtube-sync /opt/youtube-sync
-  sudo -u youtube-sync -i git checkout \
+  sudo -u youtube-sync git clone \
     https://github.com/abhayagiri/youtube-sync.git /opt/youtube-sync
 fi
 
 cd /opt/youtube-sync
 
 if [[ ! -d venv ]]; then
-  sudo -u youtube-sync -i python3 -m venv venv
+  sudo -u youtube-sync python3 -m venv venv
 fi
 
-sudo -u youtube-sync -i venv/bin/pip install --upgrade pip setuptools wheel
-sudo -u youtube-sync -i venv/bin/pip install --upgrade -r requirements.txt
+sudo -u youtube-sync venv/bin/pip install --upgrade pip setuptools wheel
+sudo -u youtube-sync venv/bin/pip install --upgrade -r requirements.txt
 
 cp server/youtube-sync.service /etc/systemd/system
 systemctl enable youtube-sync.service
@@ -48,7 +51,7 @@ if [[ ! -d /root/.acme.sh ]]; then
   curl https://get.acme.sh | sh
 fi
 
-domain="youtube.abhayagiri.org"
+domain="youtube-sync.abhayagiri.org"
 if [[ ! -d /etc/nginx/certs/$domain ]]; then
   mkdir -p /etc/nginx/certs/$domain
   chmod 700 /etc/nginx/certs/$domain
@@ -61,6 +64,6 @@ if [[ ! -d /etc/nginx/certs/$domain ]]; then
 fi
 
 cp server/youtube-sync.nginx-conf /etc/nginx/sites-available/youtube-sync
-rm /etc/nginx/sites-enables/default
-ln -s ../sites-available/youtube-sync /etc/nginx-sites-enabled/youtube-sync
+rm -f /etc/nginx/sites-enabled/default
+ln -s ../sites-available/youtube-sync /etc/nginx/sites-enabled/youtube-sync
 systemctl reload nginx.service
