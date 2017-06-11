@@ -5,9 +5,9 @@ set -x
 
 apt-get update
 apt-get install -y \
-    build-essential libsndfile-dev libmpg123-dev \
-    python3 python3-venv ffmpeg \
-    rabbitmq-server nginx
+  build-essential libsndfile-dev libmpg123-dev \
+  python3 python3-venv ffmpeg \
+  rabbitmq-server nginx
 
 if ! getent passwd youtube-sync > /dev/null; then
   useradd --system --user-group --create-home \
@@ -47,7 +47,7 @@ sudo -u youtube-sync venv/bin/pip install --upgrade -r requirements.txt
 
 cp server/youtube-sync.service /etc/systemd/system
 systemctl enable youtube-sync.service
-systemctl start youtube-sync.service
+systemctl restart youtube-sync.service
 
 if [[ ! -d /root/.acme.sh ]]; then
   curl https://get.acme.sh | sh
@@ -67,5 +67,5 @@ fi
 
 cp server/youtube-sync.nginx-conf /etc/nginx/sites-available/youtube-sync
 rm -f /etc/nginx/sites-enabled/default
-ln -s ../sites-available/youtube-sync /etc/nginx/sites-enabled/youtube-sync
+ln -sf ../sites-available/youtube-sync /etc/nginx/sites-enabled/youtube-sync
 systemctl reload nginx.service
