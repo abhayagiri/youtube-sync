@@ -56,7 +56,7 @@ sudo -u youtube-sync venv/bin/pip install --upgrade -r requirements.txt
 if [[ ! -f instance/local.cfg ]]; then
   sudo -u youtube-sync ./app setup_local_cfg \
     --dan-bin="/opt/DynamicAudioNormalizer/DynamicAudioNormalizerCLI.bin" \
-    --remote-server="server.abhayagiri.org" \
+    --remote-host="server.abhayagiri.org" \
     --remote-user="abhayagiri" \
     --remote-path="www.abhayagiri.org/shared/public/media/audio/youtube"
 fi

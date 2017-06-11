@@ -46,7 +46,7 @@ TODO
 To install or update:
 
 ```sh
-curl https://raw.githubusercontent.com/abhayagiri/youtube-sync/master/server/install | sudo bash
+curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/abhayagiri/youtube-sync/master/server/install | sudo bash
 ```
 
 After first install, add `/home/youtube-sync/.ssh/id_rsa.pub` to the destination server's `authorized_keys`.
