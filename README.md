@@ -43,8 +43,10 @@ TODO
 
 ## Server Install
 
+To install or update:
+
 ```sh
 curl https://raw.githubusercontent.com/abhayagiri/youtube-sync/master/server/install | sudo bash
 ```
 
-Add `/home/youtube-sync/.ssh/id_rsa.pub` to the destination server's `authorized_keys`.
+After first install, add `/home/youtube-sync/.ssh/id_rsa.pub` to the destination server's `authorized_keys`.
