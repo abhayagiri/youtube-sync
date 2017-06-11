@@ -46,14 +46,20 @@ cd /opt/youtube-sync
 
 sudo -u youtube-sync git pull
 
-cp -f server/local.cfg instance/local.cfg
-
 if [[ ! -d venv ]]; then
   sudo -u youtube-sync python3 -m venv venv
 fi
 
 sudo -u youtube-sync venv/bin/pip install --upgrade pip setuptools wheel
 sudo -u youtube-sync venv/bin/pip install --upgrade -r requirements.txt
+
+if [[ ! -f instance/local.cfg ]]
+  sudo -u youtube-sync ./app setup_local_cfg \
+    --dan-bin="/opt/DynamicAudioNormalizer/DynamicAudioNormalizerCLI.bin" \
+    --remote-server="server.abhayagiri.org" \
+    --remote-user="abhayagiri" \
+    --remote-path="www.abhayagiri.org/shared/public/media/audio/youtube"
+fi
 
 cp -f server/youtube-sync-gunicorn.service /etc/systemd/system
 cp -f server/youtube-sync-celery.service /etc/systemd/system
@@ -82,4 +88,4 @@ fi
 cp -f server/youtube-sync.nginx-conf /etc/nginx/sites-available/youtube-sync
 rm -f /etc/nginx/sites-enabled/default
 ln -sf ../sites-available/youtube-sync /etc/nginx/sites-enabled/youtube-sync
-systemctl reload nginx.service
+systemctl restart nginx.service

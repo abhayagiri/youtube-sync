@@ -25,7 +25,7 @@ def login():
         return flask.render_template('login.html')
     else:
         password = flask.request.form['password']
-        if password == 'testing123':
+        if password == app.config['ADMIN_PASSWORD']:
             user = User()
             flask_login.login_user(user)
             flask.flash('Logged in successfully.')
