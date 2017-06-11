@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Command</th>
+        <th>Started At</th>
+        <th>Completed At</th>
+        <th>Return Code</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for job in jobs %}
+        {% set output_id = "job-" + job.id|string + "-output" %}
+        <tr class="clickable" data-toggle="collapse" data-target="#{{ output_id }}">
+          <th scope="row">{{ job.id }}</th>
+          <td>{{ job.command }}</td>
+          <td>{{ job.started_at }}</td>
+          <td>{{ job.completed_at }}</td>
+          <td>{{ job.return_code }}</td>
+        </tr>
+        <tr id="{{ output_id }}" class="collapse">
+          <td colspan="5"><pre>{{ job.output }}</pre></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{%- endblock %}

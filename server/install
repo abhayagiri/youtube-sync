@@ -1,0 +1,66 @@
+#!/bin/bash -e
+
+apt-get update
+apt-get install -y \
+    build-essential libsndfile-dev libmpg123-dev \
+    python3 python3-venv ffmpeg \
+    rabbitmq-server nginx
+
+if ! getent passwd youtube-sync > /dev/null; then
+  useradd --system --user-group --create-home \
+    --shell /bin/bash \
+    --home-dir /home/youtube-sync \
+    youtube-sync
+fi
+
+if [[ ! -d /opt/DynamicAudioNormalizer ]]; then
+  WORK_DIR=`mktemp -d`
+  pushd "$WORK_DIR"
+  git clone https://github.com/lordmulder/DynamicAudioNormalizer.git
+  cd DynamicAudioNormalizer
+  make MODE=minimal
+  cp -r "bin/`date +'%Y-%m-%d'`" /opt/DynamicAudioNormalizer
+  popd
+  rm -rf $WORK_DIR
+fi
+
+if [[ ! -d /opt/youtube-sync ]]; then
+  mkdir /opt/youtube-sync
+  chown youtube-sync:youtube-sync /opt/youtube-sync
+  sudo -u youtube-sync -i git checkout \
+    https://github.com/abhayagiri/youtube-sync.git /opt/youtube-sync
+fi
+
+cd /opt/youtube-sync
+
+if [[ ! -d venv ]]; then
+  sudo -u youtube-sync -i python3 -m venv venv
+fi
+
+sudo -u youtube-sync -i venv/bin/pip install --upgrade pip setuptools wheel
+sudo -u youtube-sync -i venv/bin/pip install --upgrade -r requirements.txt
+
+cp server/youtube-sync.service /etc/systemd/system
+systemctl enable youtube-sync.service
+systemctl start youtube-sync.service
+
+if [[ ! -d /root/.acme.sh ]]; then
+  curl https://get.acme.sh | sh
+fi
+
+domain="youtube.abhayagiri.org"
+if [[ ! -d /etc/nginx/certs/$domain ]]; then
+  mkdir -p /etc/nginx/certs/$domain
+  chmod 700 /etc/nginx/certs/$domain
+  /root/.acme.sh/acme.sh --issue -d $domain -w /var/www/html
+  /root/.acme.sh/acme.sh --installcert -d $domain \
+  --certpath /etc/nginx/certs/$domain/cert \
+  --keypath /etc/nginx/certs/$domain/key \
+  --fullchainpath /etc/nginx/certs/$domain/fullchain \
+  --reloadcmd "systemctl reload nginx.service"
+fi
+
+cp server/youtube-sync.nginx-conf /etc/nginx/sites-available/youtube-sync
+rm /etc/nginx/sites-enables/default
+ln -s ../sites-available/youtube-sync /etc/nginx-sites-enabled/youtube-sync
+systemctl reload nginx.service

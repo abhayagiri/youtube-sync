@@ -1,0 +1,7 @@
+pre {
+  overflow: auto;
+  word-wrap: normal;
+  white-space: pre;
+  max-width: 95vw;
+  max-height: 50vh;
+}

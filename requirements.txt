@@ -1,0 +1,9 @@
+celery
+Flask
+Flask-Bootstrap
+Flask-Login
+Flask-SQLAlchemy
+gunicorn
+sh
+sqlalchemy
+youtube_dl

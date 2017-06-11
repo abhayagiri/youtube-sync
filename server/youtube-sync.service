@@ -1,0 +1,19 @@
+[Unit]
+Description=Abhayagiri YouTube Sync
+After=network.target
+
+[Service]
+PIDFile=/opt/youtube-sync/data/pid
+User=youtube-sync
+Group=youtube-sync
+WorkingDirectory=/opt/youtube-sync
+ExecStart=/opt/youtube-sync/venv/bin/gunicorn \
+  --pid /opt/youtube-sync/data/pid \
+  --bind 127.0.0.1:8000 \
+  --log-file /opt/youtube-sync/data/log \
+  youtube_sync:app
+Restart=always
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
