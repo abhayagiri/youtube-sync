@@ -9,13 +9,6 @@ apt-get install -y \
   python3 python3-venv ffmpeg \
   rabbitmq-server nginx
 
-if ! getent passwd youtube-sync > /dev/null; then
-  useradd --system --user-group --create-home \
-    --shell /bin/bash \
-    --home-dir /home/youtube-sync \
-    youtube-sync
-fi
-
 if [[ ! -d /opt/DynamicAudioNormalizer ]]; then
   WORK_DIR=`mktemp -d`
   pushd "$WORK_DIR"
@@ -25,6 +18,19 @@ if [[ ! -d /opt/DynamicAudioNormalizer ]]; then
   cp -r "bin/`date +'%Y-%m-%d'`" /opt/DynamicAudioNormalizer
   popd
   rm -rf $WORK_DIR
+fi
+
+if ! getent passwd youtube-sync > /dev/null; then
+  useradd --system --user-group --create-home \
+    --shell /bin/bash \
+    --home-dir /home/youtube-sync \
+    youtube-sync
+fi
+
+if [[ ! -f /home/youtube-sync/.ssh/id_rsa.pub ]]; then
+  sudo -u youtube-sync ssh-keygen \
+    -t rsa -N '' \
+    -f /home/youtube-sync/.ssh/id_rsa
 fi
 
 if [[ ! -d /opt/youtube-sync ]]; then
