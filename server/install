@@ -31,6 +31,8 @@ if [[ ! -f /home/youtube-sync/.ssh/id_rsa.pub ]]; then
   sudo -u youtube-sync ssh-keygen \
     -t rsa -N '' \
     -f /home/youtube-sync/.ssh/id_rsa
+  ssh-keyscan -H server.abhayagiri.org | sudo -u youtube-sync \
+    tee -a /home/youtube-sync/.ssh/known_hosts
 fi
 
 if [[ ! -d /opt/youtube-sync ]]; then
