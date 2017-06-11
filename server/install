@@ -36,6 +36,8 @@ fi
 
 cd /opt/youtube-sync
 
+sudo -u youtube-sync git pull
+
 if [[ ! -d venv ]]; then
   sudo -u youtube-sync python3 -m venv venv
 fi

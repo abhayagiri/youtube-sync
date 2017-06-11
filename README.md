@@ -40,3 +40,9 @@ venv/bin/pip install --upgrade -r requirements.txt
 ### Edit Configuration
 
 TODO
+
+## Server Install
+
+```sh
+curl https://raw.githubusercontent.com/abhayagiri/youtube-sync/master/server/install | sudo bash
+```
