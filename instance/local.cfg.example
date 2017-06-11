@@ -1,0 +1,2 @@
+DYNAMIC_AUDIO_NORMALIZER_BIN = "/path/to/DynamicAudioNormalizerCLI.bin"
+DESTINATION_SERVER_PATH = "user@server:path/to/shared/public/media/audio/youtube"

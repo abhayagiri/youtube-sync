@@ -1,0 +1,19 @@
+[Unit]
+Description=Abhayagiri YouTube Sync Gunicorn
+After=network.target
+
+[Service]
+PIDFile=/opt/youtube-sync/data/gunicorn.pid
+User=youtube-sync
+Group=youtube-sync
+EnvironmentFile=-/opt/youtube-sync/server/systemd.env
+WorkingDirectory=/opt/youtube-sync
+ExecStart=/bin/sh -c '{GUNICORN_BIN} \
+  --pid ${GUNICORN_PID} \
+  --log-file ${GUNICORN_LOG} \
+  --bind ${GUNICORN_BIND} \
+  ${GUNICORN_APP}'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

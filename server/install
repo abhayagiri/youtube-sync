@@ -38,6 +38,8 @@ cd /opt/youtube-sync
 
 sudo -u youtube-sync git pull
 
+cp -f server/local.cfg
+
 if [[ ! -d venv ]]; then
   sudo -u youtube-sync python3 -m venv venv
 fi
@@ -45,9 +47,13 @@ fi
 sudo -u youtube-sync venv/bin/pip install --upgrade pip setuptools wheel
 sudo -u youtube-sync venv/bin/pip install --upgrade -r requirements.txt
 
-cp server/youtube-sync.service /etc/systemd/system
-systemctl enable youtube-sync.service
-systemctl restart youtube-sync.service
+cp -f server/youtube-sync-gunicorn.service /etc/systemd/system
+cp -f server/youtube-sync-celery.service /etc/systemd/system
+systemctl daemon-reload
+systemctl enable youtube-sync-gunicorn.service
+systemctl enable youtube-sync-celery.service
+systemctl restart youtube-sync-gunicorn.service
+systemctl restart youtube-sync-celery.service
 
 if [[ ! -d /root/.acme.sh ]]; then
   curl https://get.acme.sh | sh
@@ -65,7 +71,7 @@ if [[ ! -d /etc/nginx/certs/$domain ]]; then
   --reloadcmd "systemctl reload nginx.service"
 fi
 
-cp server/youtube-sync.nginx-conf /etc/nginx/sites-available/youtube-sync
+cp -f server/youtube-sync.nginx-conf /etc/nginx/sites-available/youtube-sync
 rm -f /etc/nginx/sites-enabled/default
 ln -sf ../sites-available/youtube-sync /etc/nginx/sites-enabled/youtube-sync
 systemctl reload nginx.service

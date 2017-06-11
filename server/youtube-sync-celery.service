@@ -1,0 +1,28 @@
+[Unit]
+Description=Abhayagiri YouTube Sync Celery
+After=network.target
+
+[Service]
+Type=forking
+User=youtube-sync
+Group=youtube-sync
+EnvironmentFile=-/opt/youtube-sync/server/systemd.env
+WorkingDirectory=/opt/youtube-sync
+ExecStart=/bin/sh -c '${CELERY_BIN} multi start ${CELERY_NODES} \
+  -A ${CELERY_APP} \
+  --pidfile=${CELERY_PID} \
+  --logfile=${CELERY_LOG} \
+  --loglevel=${CELERY_LOG_LEVEL} \
+  ${CELERY_OPTS}'
+ExecStop=/bin/sh -c '${CELERY_BIN} multi stopwait ${CELERY_NODES} \
+  --pidfile=${CELERY_PID}'
+ExecReload=/bin/sh -c '${CELERY_BIN} multi restart ${CELERY_NODES} \
+  -A ${CELERY_APP} \
+  --pidfile=${CELERY_PID} \
+  --logfile=${CELERY_LOG} \
+  --loglevel=${CELERY_LOG_LEVEL} \
+  ${CELERY_OPTS}'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

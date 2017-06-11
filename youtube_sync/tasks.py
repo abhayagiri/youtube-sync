@@ -10,12 +10,21 @@ from .database import Job
 @celery.task()
 def make_audio(youtube_id):
     worker_path = os.path.join(app.root_path, 'worker.sh')
-    cmd = [worker_path, youtube_id]
+    env = {
+        'DYNAMIC_AUDIO_NORMALIZER_BIN': app.config['DYNAMIC_AUDIO_NORMALIZER_BIN'],
+        'DESTINATION_SERVER_PATH': app.config['DESTINATION_SERVER_PATH'],
+    }
+    job([worker_path, youtube_id], env=env)
+
+
+def job(cmd, env={}):
+    job_env = os.environ.copy()
+    job_env.update(env)
     job = Job(command=repr(cmd))
     db.session.add(job)
     db.session.commit()
     try:
-        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+        output = subprocess.check_output(cmd, stderr=subprocess.STDOUT, env=job_env)
         return_code = 0
     except subprocess.CalledProcessError as e:
         output = e.output

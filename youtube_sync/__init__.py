@@ -11,7 +11,7 @@ from . import flaskconfig
 def make_app():
 
     # Flask
-    app = flask.Flask(__name__)
+    app = flask.Flask(__name__, instance_relative_config=True)
     app.config.from_object(flaskconfig)
     app.config.from_pyfile('local.cfg', silent=True)
 
