@@ -43,6 +43,7 @@ ffmpeg -i "$WORK_DIR/c.wav" \
   -af "afade=in:st=0:d=$FADE_IN_DURATION,afade=out:st=$fade_out_start:d=$FADE_OUT_DURATION" \
   -b:a 64k -ac 1 "$WORK_DIR/d.mp3"
 
-scp "$WORK_DIR/d.mp3" "$DESTINATION_SERVER_PATH/$YOUTUBE_ID.mp3"
+mv "$WORK_DIR/d.mp3" "$WORK_DIR/$YOUTUBE_ID.mp3"
+/opt/youtube-sync/venv/bin/s3cmd put "$WORK_DIR/$YOUTUBE_ID.mp3" "s3://abhayagiri/media/audio/youtube/$YOUTUBE_ID.mp3"
 
 rm -rf "$WORK_DIR"
