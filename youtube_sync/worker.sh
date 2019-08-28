@@ -45,5 +45,6 @@ ffmpeg -i "$WORK_DIR/c.wav" \
 
 mv "$WORK_DIR/d.mp3" "$WORK_DIR/$YOUTUBE_ID.mp3"
 /opt/youtube-sync/venv/bin/s3cmd put "$WORK_DIR/$YOUTUBE_ID.mp3" "s3://abhayagiri/media/audio/youtube/$YOUTUBE_ID.mp3"
+/opt/youtube-sync/venv/bin/s3cmd setacl -v "s3://abhayagiri/media/audio/youtube/$YOUTUBE_ID.mp3" --acl-public
 
 rm -rf "$WORK_DIR"
